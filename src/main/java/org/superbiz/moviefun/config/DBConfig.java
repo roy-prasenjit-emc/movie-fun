@@ -24,6 +24,7 @@ public class DBConfig {
 
     @Bean
     public DataSource albumsDataSource(DatabaseServiceCredentials serviceCredentials) {
+        // IGNORE
         MysqlDataSource dataSource = new MysqlDataSource();
         dataSource.setURL(serviceCredentials.jdbcUrl("albums-mysql"));
         return dataSource;
