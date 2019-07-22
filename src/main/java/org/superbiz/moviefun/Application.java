@@ -8,12 +8,19 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.superbiz.moviefun.albums.AlbumsUpdateMessageConsumer;
 import org.superbiz.moviefun.blobstore.BlobStore;
 import org.superbiz.moviefun.blobstore.S3Store;
 import org.superbiz.moviefun.blobstore.ServiceCredentials;
 
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.integration.amqp.dsl.Amqp;
+import org.springframework.integration.dsl.IntegrationFlow;
+import org.springframework.integration.dsl.IntegrationFlows;
+
 @SpringBootApplication
 public class Application {
+
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -46,5 +53,14 @@ public class Application {
         }
 
         return new S3Store(s3Client, photoStorageBucket);
+    }
+
+
+    @Bean
+    public IntegrationFlow amqpInbound(@Value("${rabbitmq.queue}") String rabbitMqQueue, ConnectionFactory connectionFactory, AlbumsUpdateMessageConsumer consumer) {
+        return IntegrationFlows
+                .from(Amqp.inboundAdapter(connectionFactory, rabbitMqQueue))
+                .handle(consumer::consume)
+                .get();
     }
 }
