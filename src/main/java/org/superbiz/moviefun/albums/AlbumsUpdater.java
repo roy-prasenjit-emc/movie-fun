@@ -25,6 +25,8 @@ public class AlbumsUpdater {
     private final BlobStore blobStore;
     private final AlbumsBean albumsBean;
 
+
+
     public AlbumsUpdater(BlobStore blobStore, AlbumsBean albumsBean) {
         this.blobStore = blobStore;
         this.albumsBean = albumsBean;
@@ -46,6 +48,7 @@ public class AlbumsUpdater {
             logger.info("No albums.csv found when running AlbumsUpdater!");
             return;
         }
+
 
         List<Album> albumsToHave = readFromCsv(objectReader, maybeBlob.get().inputStream);
         List<Album> albumsWeHave = albumsBean.getAlbums();
@@ -86,4 +89,6 @@ public class AlbumsUpdater {
         maybeExisting.ifPresent(existing -> album.setId(existing.getId()));
         return album;
     }
+
+
 }
